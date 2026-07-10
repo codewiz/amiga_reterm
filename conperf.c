@@ -8,7 +8,7 @@
 #include <rexx/rexxio.h>
 
 static const char version[] =
-    "\0$VER: reterm 1.0 (16-Feb-2019) � Chris Hooper";
+    "\0$VER: conperf 1.1 (10-Jul-2026) \xA9 Chris Hooper";
 
 static const char usage[] =
     "\t-d  more details (verbose)\n"
