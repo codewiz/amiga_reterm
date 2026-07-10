@@ -357,9 +357,12 @@ main(int argc, char *argv[])
         }
     }
     atexit(cleanup);
-    /* SGR reset: parsed by every console, never generates a reply (CSI c
-     * is DA1, which VT-compliant terminals such as ViNCEd answer). */
-    fail |= measure("nop",     test_strcmd, STR_CSI "0m");
+    /* CSI R (CPR) is a read-stream-only sequence: every console parses
+     * and discards it with no reply and no rendering-state work (CSI c
+     * is DA1, which VT-compliant terminals such as ViNCEd answer).
+     * sgr0 additionally measures pen/drawmode/minterm recomputation. */
+    fail |= measure("nop",     test_strcmd, STR_CSI "R");
+    fail |= measure("sgr0",    test_strcmd, STR_CSI "0m");
     fail |= measure("WinBRep", test_window_bounds_report, "");
     fail |= measure("CrsrPos", test_device_status_report, "");
     fail |= measure("QueueIn", test_paste_stack_queue, (void *)ACTION_QUEUE);
