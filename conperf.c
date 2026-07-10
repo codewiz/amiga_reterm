@@ -8,7 +8,7 @@
 #include <rexx/rexxio.h>
 
 static const char version[] =
-    "\0$VER: reterm 1.0 (16-Feb-2019) © Chris Hooper";
+    "\0$VER: reterm 1.0 (16-Feb-2019) ï¿½ Chris Hooper";
 
 static const char usage[] =
     "\t-d  more details (verbose)\n"
@@ -265,7 +265,7 @@ check_break(void)
     }
 }
 
-static unsigned long
+static BOOL
 measure(const char *test_name, BOOL (*func)(int count), void *arg)
 {
     struct DateStamp start_ds;
@@ -313,6 +313,8 @@ int
 main(int argc, char *argv[])
 {
     int arg;
+    BOOL fail = FALSE;
+
     for (arg = 1; arg < argc; arg++) {
         char *ptr = argv[arg];
         if (*ptr == '-') {
@@ -338,23 +340,22 @@ main(int argc, char *argv[])
         }
     }
     atexit(cleanup);
-    if (measure("nop",     test_strcmd, STR_CSI "c") ||
-        measure("WinBRep", test_window_bounds_report, "") ||
-        measure("CrsrPos", test_device_status_report, "") ||
-        measure("QueueIn", test_paste_stack_queue, (void *)ACTION_QUEUE) ||
-        measure("StackIn", test_paste_stack_queue, (void *)ACTION_STACK) ||
-        measure("InsC1",   test_strcmd, STR_CSI "@") ||
-        measure("InsC40",  test_strcmd, STR_CSI "40@") ||
-        measure("InsC80",  test_strcmd, STR_CSI "80@") ||
-        measure("DelCh1",  test_strcmd, STR_CSI "P") ||
-        measure("DelCh40", test_strcmd, STR_CSI "40P") ||
-        measure("DelCh80", test_strcmd, STR_CSI "80P") ||
-        measure("InsLn1",  test_strcmd, STR_CSI "L") ||
-        measure("InsLn20", test_strcmd, STR_CSI "20L") ||
-        measure("DelLn1",  test_strcmd, STR_CSI "M") ||
-        measure("DelLn20", test_strcmd, STR_CSI "20M") ||
-        measure("EraseLn", test_strcmd, STR_CSI "K") ||
-        measure("EraseDs", test_strcmd, STR_CSI "J"))
-        exit(1);
-    exit(0);
+    fail |= measure("nop",     test_strcmd, STR_CSI "c");
+    fail |= measure("WinBRep", test_window_bounds_report, "");
+    fail |= measure("CrsrPos", test_device_status_report, "");
+    fail |= measure("QueueIn", test_paste_stack_queue, (void *)ACTION_QUEUE);
+    fail |= measure("StackIn", test_paste_stack_queue, (void *)ACTION_STACK);
+    fail |= measure("InsC1",   test_strcmd, STR_CSI "@");
+    fail |= measure("InsC40",  test_strcmd, STR_CSI "40@");
+    fail |= measure("InsC80",  test_strcmd, STR_CSI "80@");
+    fail |= measure("DelCh1",  test_strcmd, STR_CSI "P");
+    fail |= measure("DelCh40", test_strcmd, STR_CSI "40P");
+    fail |= measure("DelCh80", test_strcmd, STR_CSI "80P");
+    fail |= measure("InsLn1",  test_strcmd, STR_CSI "L");
+    fail |= measure("InsLn20", test_strcmd, STR_CSI "20L");
+    fail |= measure("DelLn1",  test_strcmd, STR_CSI "M");
+    fail |= measure("DelLn20", test_strcmd, STR_CSI "20M");
+    fail |= measure("EraseLn", test_strcmd, STR_CSI "K");
+    fail |= measure("EraseDs", test_strcmd, STR_CSI "J");
+    exit(fail ? 10 : 0);
 }
